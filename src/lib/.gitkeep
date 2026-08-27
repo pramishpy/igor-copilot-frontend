@@ -1,0 +1,3 @@
+# API service layer and utilities
+# This directory will contain typed fetch wrappers for the backend API.
+# See Phase 4, Issue #5 (API service layer) for implementation plan.

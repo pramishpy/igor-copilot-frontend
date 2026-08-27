@@ -1,0 +1,16 @@
+# Igor Copilot Frontend — Docker Compose
+#
+# For full-stack (frontend + backend), see the integration compose in Phase 6.
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped

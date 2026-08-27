@@ -1,0 +1,3 @@
+# Shared TypeScript interfaces and types
+# This directory will contain API response types, component prop types, etc.
+# Strict typing — no `any` types allowed.
