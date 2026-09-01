@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+.github
+out
+build
+dist
+*.log
+.DS_Store
