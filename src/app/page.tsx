@@ -7,6 +7,8 @@ import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { MessageList } from "@/components/MessageList";
 import { ChatInput } from "@/components/ChatInput";
+import { WaveModal } from "@/components/WaveModal";
+import { MacroConsole } from "@/components/MacroConsole";
 
 export default function Home() {
   // Session State
@@ -26,6 +28,8 @@ export default function Home() {
 
   // UI State
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isConsoleOpen, setIsConsoleOpen] = useState(false);
+  const [inspectingWave, setInspectingWave] = useState<string | null>(null);
   const [isLoadingStatus, setIsLoadingStatus] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isExecutingScript, setIsExecutingScript] = useState(false);
@@ -175,7 +179,6 @@ export default function Home() {
               });
               return { ...prev, [currentSessionId]: updated };
             });
-            // Refresh Igor status after operations complete
             refreshIgorStatus();
           }
         },
@@ -270,9 +273,7 @@ export default function Home() {
         onDeleteSession={handleDeleteSession}
         igorStatus={igorStatus}
         onRefreshIgor={refreshIgorStatus}
-        onInspectWave={(wave) =>
-          handleSendMessage(`Inspect wave '${wave}' in detail: show its length, data type, and summary statistics.`)
-        }
+        onInspectWave={(wave) => setInspectingWave(wave)}
       />
 
       {/* Main Chat Area */}
@@ -285,6 +286,8 @@ export default function Home() {
           onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
           isSidebarOpen={isSidebarOpen}
           onNewChat={handleNewSession}
+          onToggleConsole={() => setIsConsoleOpen(!isConsoleOpen)}
+          isConsoleOpen={isConsoleOpen}
         />
 
         {/* Message Stream */}
@@ -300,6 +303,21 @@ export default function Home() {
           onSendMessage={handleSendMessage}
           isLoading={isGenerating}
           onStop={handleStop}
+        />
+
+        {/* Collapsible Power-User Direct Macro Console */}
+        <MacroConsole
+          isOpen={isConsoleOpen}
+          onClose={() => setIsConsoleOpen(false)}
+          onRefreshWorkspace={refreshIgorStatus}
+        />
+
+        {/* Interactive Wave Inspector Modal */}
+        <WaveModal
+          waveName={inspectingWave}
+          onClose={() => setInspectingWave(null)}
+          onAction={handleSendMessage}
+          onExecuteScript={handleExecuteScript}
         />
       </div>
     </div>
