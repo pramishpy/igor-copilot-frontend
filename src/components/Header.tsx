@@ -47,7 +47,7 @@ export const Header: React.FC<HeaderProps> = ({
               Igor Copilot
             </h1>
             <span className="text-[10px] text-slate-400 font-mono">
-              WaveMetrics Automation v0.3.0
+              WaveMetrics Automation v1.0.0
             </span>
           </div>
         </div>

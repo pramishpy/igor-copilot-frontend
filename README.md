@@ -11,31 +11,43 @@
 
 This is the **web frontend** for [Igor Copilot](https://github.com/pramishpy/igor-copilot-backend) — a natural language interface that lets researchers command WaveMetrics Igor Pro through conversational AI.
 
-### Features (Planned)
-- 💬 **Chat Interface** — Send natural language commands, receive streamed AI responses
-- 📊 **Graph Rendering** — View Igor Pro-generated graphs inline in the chat
-- ⚡ **Real-Time Streaming** — Server-Sent Events for live token-by-token response rendering
-- 🔧 **Tool Execution Status** — Visual indicators showing when Igor Pro commands are executing
-- 🎨 **Modern UI** — Tailwind CSS v4, responsive design, dark mode
+### Features
+- 💬 **Conversational AI Chat** — Send natural language commands and receive streamed responses with tool call execution traces.
+- 📊 **Inline Graph Rendering & Lightbox** — View Igor Pro graph plots inline with zoom lightbox and image download.
+- ⚡ **Real-Time SSE Streaming** — Server-Sent Events client for live status and message streaming.
+- 🔬 **Wave Inspector Modal (`WaveModal`)** — Inspect wave dimensions, memory status, raw `WaveInfo`, and execute one-click fits/plots.
+- 💻 **Direct Macro Console (`MacroConsole`)** — Power-user collapsible terminal for executing raw IPF commands with execution logs.
+- 📝 **IPF Syntax Highlighting (`CodeBlock`)** — Syntax highlighting for Igor Pro macro language with one-click "Run in Igor".
+- 📁 **Live Workspace Inspector (`Sidebar`)** — Searchable active wave list, data folder hierarchy, and COM connection monitor.
+- 🎨 **Scientific Dark Theme** — Tailwind CSS v4 design tokens, glassmorphic panels, and animated pulse indicators.
 
 ## Architecture
 
 ```
-┌─────────────────────┐     SSE/REST     ┌─────────────────────────┐
-│   This Repo          │ ◄──────────────► │   Backend               │
-│   Next.js + React    │                  │   FastAPI + Gemini Agent │
-│   Tailwind CSS v4    │                  │                          │
-└─────────────────────┘                  └─────────────────────────┘
+┌─────────────────────────────────┐     SSE / REST     ┌─────────────────────────┐
+│       Next.js 15 Frontend       │ ◄────────────────► │     FastAPI Backend     │
+│                                 │                    │                         │
+│  • MessageList & MessageItem    │                    │  • Gemini Agent Loop    │
+│  • WaveModal & MacroConsole     │                    │  • COM Bridge to Igor   │
+│  • IPF CodeBlock & ToolTrace    │                    │  • Graph Export API     │
+└─────────────────────────────────┘                    └─────────────────────────┘
 ```
 
-### Key Directories
+### Component Architecture
 
-| Directory | Purpose |
+| Component | Responsibility |
 |---|---|
-| `src/app/` | Next.js App Router pages and layouts |
-| `src/components/` | Reusable React UI components |
-| `src/lib/` | API service layer, utilities |
-| `src/types/` | Shared TypeScript interfaces |
+| `Header.tsx` | App branding, COM connectivity badge, terminal toggle, and new chat action |
+| `Sidebar.tsx` | Dual-tab drawer for Chat Sessions and Live Igor Pro Workspace Explorer |
+| `MessageList.tsx` | Auto-scrolling conversation feed and quick-prompt empty-state cards |
+| `MessageItem.tsx` | Message bubbles supporting markdown, IPF code, tool timelines, and graphs |
+| `CodeBlock.tsx` | IPF syntax highlighter with copy and direct "Run in Igor" buttons |
+| `ToolTrace.tsx` | Collapsible step viewer showing tools executed in real time |
+| `GraphPreview.tsx` | Inline graph viewer with manipulation toolbar and fullscreen lightbox |
+| `WaveModal.tsx` | Wave property inspector with quick copilot actions (fit, plot, stats) |
+| `MacroConsole.tsx` | Bottom drawer console for executing raw IPF scripts directly |
+| `ChatInput.tsx` | Auto-expanding input with keyboard shortcuts and macro chip shortcuts |
+| `StatusBadge.tsx` | Real-time Igor COM bridge status with manual refresh trigger |
 
 ## Tech Stack
 
