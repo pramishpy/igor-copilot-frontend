@@ -5,6 +5,7 @@ import { ChatMessage } from "@/types";
 import { CodeBlock } from "./CodeBlock";
 import { ToolTrace } from "./ToolTrace";
 import { GraphPreview } from "./GraphPreview";
+import { ThinkingTrace } from "./ThinkingTrace";
 
 interface MessageItemProps {
   message: ChatMessage;
@@ -23,28 +24,24 @@ export const MessageItem: React.FC<MessageItemProps> = ({
   const renderFormattedContent = (content: string) => {
     const parts = content.split(/(```[\s\S]*?```)/g);
     return parts.map((part, idx) => {
-      if (part.startsWith("```") && part.endsWith("```")) {
+      if (part.startsWith("```")) {
         const lines = part.slice(3, -3).trim().split("\n");
-        const firstLine = lines[0].trim();
-        const hasLang = /^[a-zA-Z0-9_-]+$/.test(firstLine);
-        const lang = hasLang ? firstLine : "ipf";
-        const code = (hasLang ? lines.slice(1) : lines).join("\n");
-
+        const lang = lines[0].trim().toLowerCase();
+        const code = lines.slice(1).join("\n");
         return (
           <CodeBlock
             key={idx}
-            code={code}
-            language={lang}
+            code={code || lines.join("\n")}
+            language={lang || "ipf"}
             onExecute={onExecuteScript}
             isExecuting={isExecutingScript}
           />
         );
       }
-
       return (
-        <div key={idx} className="whitespace-pre-wrap leading-relaxed">
+        <span key={idx} className="whitespace-pre-wrap leading-relaxed">
           {part}
-        </div>
+        </span>
       );
     });
   };
@@ -66,6 +63,14 @@ export const MessageItem: React.FC<MessageItemProps> = ({
           isUser ? "items-end" : "items-start"
         }`}
       >
+        {/* Thinking & Reasoning Trace */}
+        {!isUser && message.thoughts && message.thoughts.length > 0 && (
+          <ThinkingTrace
+            thoughts={message.thoughts}
+            isStreaming={message.isStreaming}
+          />
+        )}
+
         <div
           className={`px-4 py-3 rounded-2xl text-sm shadow-sm ${
             isUser

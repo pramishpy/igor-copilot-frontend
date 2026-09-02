@@ -109,7 +109,22 @@ export default function Home() {
         userText,
         currentSessionId,
         (event) => {
-          if (event.event === "tool_call" && event.data) {
+          if (event.event === "thought" && event.data?.thought) {
+            setMessagesBySession((prev) => {
+              const currentList = prev[currentSessionId] || [];
+              const updated = currentList.map((m) => {
+                if (m.id === assistantMsgId) {
+                  const currentThoughts = m.thoughts || [];
+                  return {
+                    ...m,
+                    thoughts: [...currentThoughts, event.data.thought as string],
+                  };
+                }
+                return m;
+              });
+              return { ...prev, [currentSessionId]: updated };
+            });
+          } else if (event.event === "tool_call" && event.data) {
             setMessagesBySession((prev) => {
               const currentList = prev[currentSessionId] || [];
               const updated = currentList.map((m) => {
@@ -143,6 +158,7 @@ export default function Home() {
                   return {
                     ...m,
                     content: event.data.reply || m.content,
+                    thoughts: event.data.thoughts || m.thoughts,
                     ipfScripts: event.data.ipf_scripts || m.ipfScripts,
                     graphUrls: event.data.graph_urls || m.graphUrls,
                     isStreaming: false,
