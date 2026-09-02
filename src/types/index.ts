@@ -15,6 +15,7 @@ export interface ChatMessage {
   role: "user" | "assistant" | "system";
   content: string;
   timestamp: number;
+  thoughts?: string[];
   ipfScripts?: string[];
   graphUrls?: string[];
   toolTrace?: ToolCallTraceItem[];
@@ -46,9 +47,11 @@ export interface WaveInfo {
 }
 
 export interface SSEStreamEvent {
-  event: "start" | "tool_call" | "message" | "error" | "done";
+  event: "start" | "thought" | "tool_call" | "message" | "error" | "done";
   data: {
     session_id?: string;
+    thought?: string;
+    thoughts?: string[];
     turn?: number;
     tool?: string;
     args?: Record<string, unknown>;
